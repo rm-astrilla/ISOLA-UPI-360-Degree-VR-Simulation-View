@@ -6,11 +6,11 @@
     <meta name="description" content="Custom Stellarium Resources by Raihan Mohammad">
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <script>
-      // Registrasi komponen zoom sebelum a-scene dimuat
+      
       AFRAME.registerComponent('zoom-on-wheel', {
         schema: {
           min: {type: 'number', default: 20},
-          max: {type: 'number', default: 80}
+          max: {type: 'number', default: 150}
         },
         init: function () {
           var self = this;
@@ -47,7 +47,9 @@
              animation="property: rotation; to: 0 540 0; loop: true; dur: 200000; easing: linear">
       </a-sky>
 
-      <a-entity camera="fov: 60" look-controls zoom-on-wheel="min: 20; max: 80"></a-entity>
+      <a-entity camera="fov: 60" look-controls="magicWindowTrackingEnabled: false; touchEnabled: true; mouseEnabled: true"   zoom-on-wheel position="0 1.6 0">
+        
+</a-entity>
 
     </a-scene>
 
