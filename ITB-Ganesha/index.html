@@ -7,58 +7,27 @@
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <script>
       
-AFRAME.registerComponent('zoom-controls', {
-  schema: {
-    min: {type: 'number', default: 20},
-    max: {type: 'number', default: 80}
-  },
-  init: function () {
-    var self = this;
-    this.initialDist = 0; // Untuk simpan jarak awal cubitan
+      AFRAME.registerComponent('zoom-on-wheel', {
+        schema: {
+          min: {type: 'number', default: 20},
+          max: {type: 'number', default: 120}
+        },
+        init: function () {
+          var self = this;
+          window.addEventListener('wheel', function (event) {
+            var cam = self.el.getAttribute('camera');
+            var fov = cam.fov;
 
-    // KONTROL MOUSE (DESKTOP)
-    window.addEventListener('wheel', function (event) {
-      var cam = self.el.getAttribute('camera');
-      var fov = cam.fov + event.deltaY * 0.05;
-      fov = Math.min(Math.max(fov, self.data.min), self.data.max);
-      self.el.setAttribute('camera', 'fov', fov);
-    });
 
-    // KONTROL SENTUH / PINCH (MOBILE NON-GYRO)
-    window.addEventListener('touchstart', function (event) {
-      if (event.touches.length === 2) {
-        // Hitung jarak awal antara dua jari
-        self.initialDist = Math.hypot(
-          event.touches[0].pageX - event.touches[1].pageX,
-          event.touches[0].pageY - event.touches[1].pageY
-        );
-      }
-    }, false);
+            fov += event.deltaY * 0.05;
 
-    window.addEventListener('touchmove', function (event) {
-      if (event.touches.length === 2) {
-        var cam = self.el.getAttribute('camera');
-        var fov = cam.fov;
+            // Batasi agar zoom tidak terlalu jauh atau terlalu dekat
+            fov = Math.min(Math.max(fov, self.data.min), self.data.max);
 
-        // Hitung jarak baru saat jari bergerak
-        var currentDist = Math.hypot(
-          event.touches[0].pageX - event.touches[1].pageX,
-          event.touches[0].pageY - event.touches[1].pageY
-        );
-
-        // Jika jarak membesar = zoom in (fov kecil), jarak mengecil = zoom out (fov besar)
-        var diff = self.initialDist - currentDist;
-        fov += diff * 0.1; // Sensitivitas pinch
-
-        fov = Math.min(Math.max(fov, self.data.min), self.data.max);
-        self.el.setAttribute('camera', 'fov', fov);
-
-        // Update jarak awal untuk frame berikutnya
-        self.initialDist = currentDist;
-      }
-    }, false);
-  }
-});
+            self.el.setAttribute('camera', 'fov', fov);
+          });
+        }
+      });
     </script>
     <style>
       body { margin: 0; overflow: hidden; }
